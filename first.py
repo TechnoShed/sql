@@ -5,7 +5,21 @@ from mysql.connector import Error
 from sqlalchemy import create_engine
 # import pymysql
 
-# Function to connect and open database
+def dropmysql(tablename):
+    mydb = mysql.connector.connect(host='192.168.1.201',
+                                 user='root',
+                                 database='inspections',
+                                 password='TSD704153TSD')
+    mycursor = mydb.cursor()
+    if mydb.is_connected():
+            db_Info = mydb.get_server_info()
+            print("Connected to MySQL Server version ", db_Info)
+            mycursor.execute("DROP TABLE " +tablename)
+            for x in mycursor:
+                print(x) 
+            mycursor.close()
+            mydb.close()
+            print("COnnection closed")
 
 def showmysql():
     mydb = mysql.connector.connect(host='192.168.1.201',
@@ -16,79 +30,69 @@ def showmysql():
     if mydb.is_connected():
             db_Info = mydb.get_server_info()
             print("Connected to MySQL Server version ", db_Info)
-            record = mycursor.fetchone()
-            print("You're connected to database: ", record)
             mycursor.execute("SHOW TABLES")
-
             for x in mycursor:
                 print(x) 
-
             mycursor.close()
             mydb.close()
             print("COnnection closed")
 
+def copymysql( df,tablename ):
+    mydb = create_engine("mysql+pymysql://{user}:{pw}@192.168.1.201/{db}"
+                    .format(user="root",
+                            pw="TSD704153TSD",
+                            db="inspections"))
+    try:
+        frame           = df.to_sql(tablename, mydb, if_exists='fail', index=False);
+    except ValueError as vx:#
+        print(vx)
+    except Exception as ex:
+        print(ex)
+    else:
+        print("done");
+        print("Table %s created successfully."%tablename);
 
-# Load Inspections XL data into dataframes
+    finally:
+        print("ended")
 
-#df_inspections = pd.read_excel('data.xlsx', sheet_name='Inspections')
-#df_events = pd.read_excel('data.xlsx', sheet_name='Events')
-#df_comments = pd.read_excel('data.xlsx', sheet_name='Comments')
-#df_users = pd.read_excel('data.xlsx', sheet_name='Users')
-#df_vehicles = pd.read_excel('data.xlsx', sheet_name='Vehicles')
-#print(df_inspections)
-#print(df_vehicles)
-#print(df_events)
-#print(df_events)
-#print(df_users)
-
-#mydb = mysql.connector.connect(host='192.168.1.201',
-#                                 user='root',
-#                                 database='inspections',
-#                                 password='TSD704153TSD')
- # create sqlalchemy engine
-mydb = create_engine("mysql+pymysql://{user}:{pw}@192.168.1.201/{db}"
-                   .format(user="root",
-                           pw="TSD704153TSD",
-                           db="inspections"))
-   
-#tableName = "inspections"
-try:
-
-   print("running queries...")
-   #frame           = df_inspections.to_sql(tableName, mydb, if_exists='fail');
-
-except ValueError as vx:#
-
-    print(vx)
-
-except Exception as ex:
-
-    print(ex)
-
-else:
-
-    print("done");
-    #print("Table %s created successfully."%tableName);
-
-finally:
-    print("ended")
-
-showmysql()
-
-new_df =pd.read_sql('SELECT * FROM inspections WHERE Inspector="upykey@gmail.com" AND PassFail="FAIL"', mydb)
-
-print(new_df)
-
-# drop "inspection form" column
-con = mysql.connector.connect(host='192.168.1.201',
+def showtable(tablename):
+    mydb = mysql.connector.connect(host='192.168.1.201',
                                  user='root',
                                  database='inspections',
                                  password='TSD704153TSD')
-   
-cursor = con.cursor()
-cursor.execute('DESCRIBE inspections')
-for x in cursor:
-    print(x) 
+    query = "SELECT * FROM " + tablename
+    if mydb.is_connected():
+            db_Info = mydb.get_server_info()
+            print("Connected to MySQL Server version ", db_Info)
+            new_df =pd.read_sql(query, mydb)
+            print(new_df)
+            mydb.close()
+            print("COnnection closed")
 
-# cursor.close()
-con.close()
+def querymysql(tablename,field, searchstr):
+    query = "SELECT * FROM " + tablename + " WHERE "+field +"='" + searchstr + "'"
+    print(query)
+    mydb = create_engine("mysql+pymysql://{user}:{pw}@192.168.1.201/{db}"
+                    .format(user="root",
+                            pw="TSD704153TSD",
+                            db="inspections"))
+    new_df1 =pd.read_sql_query(query, mydb)
+    numresults = len(new_df1.index)
+    print(numresults)
+    return numresults, new_df1
+
+
+# Load Inspections XL data into dataframes
+# df_inspections = pd.read_excel('data.xlsx', sheet_name='Inspections')
+# df_events = pd.read_excel('data.xlsx', sheet_name='Events')
+# df_comments = pd.read_excel('data.xlsx', sheet_name='Comments')
+# df_users = pd.read_excel('data.xlsx', sheet_name='Users')
+# df_vehicles = pd.read_excel('data.xlsx', sheet_name='Vehicles')
+
+#copymysql(df_comments, "comments")
+#showmysql()
+#showtable("comments")
+result_df=querymysql("comments","REG","FD22VSK")
+print(result_df )
+result_df=querymysql("vehicles","REG","FD22VSK")
+print(result_df)
