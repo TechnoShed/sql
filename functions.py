@@ -10,7 +10,7 @@ def querymysql(tablename,field, searchstr):
                     .format(user="root",
                             pw="TSD704153TSD",
                             db="inspections"))
-    new_df1 =pd.read_sql_query(query, mydb)
+    new_df1 =pd.read_sql_query(query, mydb, index_col="REG")
     numresults = len(new_df1.index)
     return numresults, new_df1
 
@@ -63,5 +63,5 @@ def showtable(tablename):
 
 print("TechnoShed Studios MYSQL Fleet Manager functions test")
 showmysql()
-df=querymysql("vehicles","Status","Pass")[1]
+df=querymysql("vehicles","Type","'*'")[1]
 print(df)
