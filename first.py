@@ -75,6 +75,20 @@ finally:
 
 showmysql()
 
-new_df =pd.read_sql('SELECT * FROM inspections WHERE Inspector="upykey@gmail.com"', mydb)
+new_df =pd.read_sql('SELECT * FROM inspections WHERE Inspector="upykey@gmail.com" AND PassFail="FAIL"', mydb)
 
 print(new_df)
+
+# drop "inspection form" column
+con = mysql.connector.connect(host='192.168.1.201',
+                                 user='root',
+                                 database='inspections',
+                                 password='TSD704153TSD')
+   
+cursor = con.cursor()
+cursor.execute('DESCRIBE inspections')
+for x in cursor:
+    print(x) 
+
+# cursor.close()
+con.close()
