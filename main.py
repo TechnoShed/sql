@@ -2,7 +2,7 @@ import pandas as pd
 import mysql.connector
 from mysql.connector import Error
 from sqlalchemy import create_engine
-
+import tkinter as tk
 
 serverhost = "192.168.1.201"
 serveruser = "root"
@@ -107,7 +107,31 @@ vehdetails = result[0]
 vehcomments = result[1]
 vehinspections = result[2]
 
+root=tk.Tk()
+root.title("Vehicle Search")
+root.geometry('1024x800')
 
+topFrame = tk.Frame(root)
+bottomFrame = tk.Frame(root)
+topFrame.pack()
+bottomFrame.pack()
 
+# define form
+
+searchLabel = tk.Label(topFrame, text="REGISTRATION")
+searchEntry = tk.Entry(topFrame, text="Enter Reg Here")
+searchButton = tk.Button(topFrame, text="SEARCH")
+
+resultsBox = tk.Text(bottomFrame,height=40, width=100)
+
+# pack form
+
+searchLabel.grid(row=0, column=0)
+searchEntry.grid(row=0, column=2)
+searchButton.grid(row=1,column=1)
+
+resultsBox.pack()
+
+root.mainloop()
 # showtabledetails("vehicles")
 # showtabledetails("comments")
