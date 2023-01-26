@@ -111,10 +111,19 @@ root=tk.Tk()
 root.title("Vehicle Search")
 root.geometry('1024x800')
 
-topFrame = tk.Frame(root)
-bottomFrame = tk.Frame(root)
+topFrame = tk.Frame(root, borderwidth=5, bg ="light blue")
+bottomFrame = tk.Frame(root, borderwidth=5, bg="light green")
+
+detailsFrame = tk.Frame(bottomFrame ,borderwidth=5, bg="light grey")
+commentsFrame = tk.Frame(bottomFrame ,borderwidth=5, bg="light grey")
+inspectionsFrame = tk.Frame(bottomFrame ,borderwidth=5, bg="light grey")
+
 topFrame.pack()
 bottomFrame.pack()
+detailsFrame.grid(row=0,column=0)
+commentsFrame.grid(row=1,column=0)
+inspectionsFrame.grid(row=2,column=0)
+
 
 # define form
 
@@ -122,7 +131,10 @@ searchLabel = tk.Label(topFrame, text="REGISTRATION")
 searchEntry = tk.Entry(topFrame, text="Enter Reg Here")
 searchButton = tk.Button(topFrame, text="SEARCH")
 
-resultsBox = tk.Text(bottomFrame,height=40, width=100)
+resultReg = tk.Label(detailsFrame, text="Vehicle")
+
+
+resultBox = tk.Text(bottomFrame,height=40, width=100)
 
 # pack form
 
@@ -130,8 +142,9 @@ searchLabel.grid(row=0, column=0)
 searchEntry.grid(row=0, column=2)
 searchButton.grid(row=1,column=1)
 
-resultsBox.pack()
 
+resultReg.grid(row=0, column=0)
+resultBox.grid(row=2, column=0)
 root.mainloop()
 # showtabledetails("vehicles")
 # showtabledetails("comments")
