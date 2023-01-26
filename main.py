@@ -130,10 +130,7 @@ inspectionsFrame.grid(row=2,column=0)
 searchLabel = tk.Label(topFrame, text="REGISTRATION")
 searchEntry = tk.Entry(topFrame, text="Enter Reg Here")
 searchButton = tk.Button(topFrame, text="SEARCH")
-
-resultReg = tk.Label(detailsFrame, text="Vehicle")
-
-
+resultLabel = tk.Label(detailsFrame, text="Vehicle")
 resultBox = tk.Text(bottomFrame,height=40, width=100)
 
 # pack form
@@ -143,7 +140,7 @@ searchEntry.grid(row=0, column=2)
 searchButton.grid(row=1,column=1)
 
 
-resultReg.grid(row=0, column=0)
+resultLabel.grid(row=0, column=0)
 resultBox.grid(row=2, column=0)
 root.mainloop()
 # showtabledetails("vehicles")
