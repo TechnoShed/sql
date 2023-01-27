@@ -98,7 +98,6 @@ def getvehicledetails(reg):
     # print(inspections)
     return details , comments , inspections
 
-
 print("TechnoShed Studios MYSQL Fleet Manager functions test\n\n")
 showmysql()
 result = getvehicledetails("CU67VXH")
@@ -111,27 +110,36 @@ root=tk.Tk()
 root.title("Vehicle Search")
 root.geometry('1024x800')
 
-topFrame = tk.Frame(root, borderwidth=5, bg ="light blue")
-bottomFrame = tk.Frame(root, borderwidth=5, bg="light green")
+# topframe = tk.LabelFrame(tframe, text="Information", borderwidth=2, relief="ridge")
+#     topframe.grid(row=0, column=0,columnspan=2, padx=5,pady=5)
+#     mainframe =tk.LabelFrame(tframe, text="Processed Data")
+#     mainframe.grid(row=1, column=0, padx=5, pady=5)
+#     rightframe= tk.LabelFrame(tframe, text="AML Email Data")
+#     rightframe.grid(row=1,column=1, padx=5, pady=5)
 
-detailsFrame = tk.Frame(bottomFrame ,borderwidth=5, bg="light grey")
-commentsFrame = tk.Frame(bottomFrame ,borderwidth=5, bg="light grey")
-inspectionsFrame = tk.Frame(bottomFrame ,borderwidth=5, bg="light grey")
+
+
+topFrame = tk.LabelFrame(root, text="Search Box", borderwidth=5, relief="ridge", bg ="light blue")
+bottomFrame = tk.LabelFrame(root, text="Vehicle Details", borderwidth=5, relief="ridge", bg="light green")
 
 topFrame.pack()
 bottomFrame.pack()
-detailsFrame.grid(row=0,column=0)
-commentsFrame.grid(row=1,column=0)
-inspectionsFrame.grid(row=2,column=0)
-
 
 # define form
 
 searchLabel = tk.Label(topFrame, text="REGISTRATION")
 searchEntry = tk.Entry(topFrame, text="Enter Reg Here")
 searchButton = tk.Button(topFrame, text="SEARCH")
-resultLabel = tk.Label(detailsFrame, text="Vehicle")
-resultBox = tk.Text(bottomFrame,height=40, width=100)
+
+details = tk.Text(bottomFrame,height=40, width=100)
+
+detailscroll = tk.Scrollbar(details)
+
+details = tk.Text(bottomFrame, height=40, width=100, padx=1, yscrollcommand=detailscroll.set, bg="light yellow", fg="black")
+details.pack(side = "left", fill=tk.Y)
+detailscroll.pack(side="right", fill=tk.Y)  
+detailscroll.config(command=details.yview)
+
 
 # pack form
 
@@ -139,9 +147,4 @@ searchLabel.grid(row=0, column=0)
 searchEntry.grid(row=0, column=2)
 searchButton.grid(row=1,column=1)
 
-
-resultLabel.grid(row=0, column=0)
-resultBox.grid(row=2, column=0)
 root.mainloop()
-# showtabledetails("vehicles")
-# showtabledetails("comments")
