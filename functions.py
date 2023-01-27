@@ -75,7 +75,7 @@ def showtable(tablename):
                                  user=serveruser,
                                  database='inspections',
                                  password=serverpass)
-    query = "SELECT * FROM " + tablename
+    query = "DESCRIBE " + tablename
     if mydb.is_connected():
             new_df =pd.read_sql(query, mydb)
             mydb.close()
@@ -101,13 +101,3 @@ def getvehicledetails(reg):
 
 print("TechnoShed Studios MYSQL Fleet Manager functions test\n\n")
 showmysql()
-result = getvehicledetails("CU67VXH")
-
-vehdetails = result[0]
-vehcomments = result[1]
-vehinspections = result[2]
-
-
-
-# showtabledetails("vehicles")
-# showtabledetails("comments")
