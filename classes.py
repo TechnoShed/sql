@@ -17,3 +17,6 @@ class vehicle():
         self.status=Status
         self.site=Site
 
+class event():
+    def __init__(self, REG, VIN, Make, Model, Year, Colour, Mileage, Type, Image, Inspector, DateTime_Updated, Status, Site):
+        self.REG=REG
