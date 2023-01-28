@@ -4,19 +4,19 @@ from mysql.connector import Error
 from sqlalchemy import create_engine
 import tkinter as tk
 
-serverhost = "192.168.1.201"
+serverhost = "technoshed.duckdns.org"
 serveruser = "root"
 serverpass = "TSD704153TSD"
 
-def querymysql(tablename,field, searchstr):
-    query = "SELECT * FROM " + tablename + " WHERE "+field + searchstr
+def dfquerymysql(searchstr):
+    query = searchstr
     print(query)
     mydb = create_engine("mysql+pymysql://{user}:{pw}@{server}/{db}"
                     .format(user=serveruser,
                             pw=serverpass,
                             server=serverhost,
                             db="inspections"))
-    new_df1 =pd.read_sql_query(query, mydb, index_col="REG")
+    new_df1 =pd.read_sql_query(query, mydb)
     return new_df1
 
 def showmysql():
@@ -80,14 +80,55 @@ def showtable(tablename):
             new_df =pd.read_sql(query, mydb)
             mydb.close()
     return new_df
+def querydb(query):
+    mydb = mysql.connector.connect(host=serverhost,
+                                 user=serveruser,
+                                 database='inspections',
+                                 password=serverpass)
+    mycursor = mydb.cursor()
+    if mydb.is_connected():
+            #print("QUERYING with  "+query)
+            mycursor.execute(query)
+            data=mycursor.fetchone()
+            mycursor.close()
+            mydb.close()
+            return data
+def updatedb(query):
+    mydb = mysql.connector.connect(host=serverhost,
+                                 user=serveruser,
+                                 database='inspections',
+                                 password=serverpass)
+    mycursor = mydb.cursor()
+    if mydb.is_connected():
+            #print("UPDATING with  "+query)
+            mycursor.execute(query)
+            mycursor.close()
+            mydb.commit()
+            mydb.close()
+            return
 
 def getvehicledetails(reg):
     print("Retrieving details for "+ str(reg))
-    regstr = "='" + reg + "'"
-    details = querymysql("vehicles","REG",regstr)
-    comments = querymysql("comments","REG",regstr)
-    inspections =querymysql("inspections","REG",regstr)
-    # comments = comments['DateTime','User','Comment']
+    
+    detailquery = "SELECT * FROM inspections.vehicles WHERE REG='"+reg+"'"
+    commentquery = "SELECT * FROM inspections.comments WHERE REG='"+reg+"'"
+    inspectionquery = "SELECT * FROM inspections.inspections WHERE REG='"+reg+"'"
+
+    details = dfquerymysql(detailquery)
+    comments = dfquerymysql(commentquery)
+    inspections =dfquerymysql(inspectionquery)
+    #comments = comments['DateTime','User','Comment']
+    return details , comments , inspections
+
+def updatemileage(reg , mileage):
+    query="UPDATE vehicles SET Mileage="+ str(mileage)+" WHERE REG='"+reg+"';"
+    updatedb(query)
+    return mileage
+
+def getmileage(reg):
+    query="SELECT mileage, reg FROM inspections.vehicles WHERE REG='"+reg+"'"
+    mileage = querydb(query)[0]
+    return mileage
 
 
     # print("\n\nVEHICLE DETAILS\n")
@@ -96,18 +137,21 @@ def getvehicledetails(reg):
     # print(comments)
     # print("\nINSPECTIONS\n")
     # print(inspections)
-    return details , comments , inspections
-
+    
 print("TechnoShed Studios MYSQL Fleet Manager functions test\n\n")
-showmysql()
-result = getvehicledetails("CU67VXH")
+# showmysql()
+searchstr = "GD18XOZ"
 
-vehdetails = result[0]
-vehcomments = result[1]
-vehinspections = result[2]
+mileage =getmileage(searchstr)
+updatemileage(searchstr, 3000)
+newmileage=getmileage(searchstr)
+print(searchstr+" has a mile of "+str(mileage) +" and now has a mileage of" + str(newmileage))
+#vehicledetails, vehiclecomments, vehicleinspections = getvehicledetails(searchstr)
 
+# print(vehicledetails)
+# print(vehiclecomments)
+# print(vehicleinspections)
 
-showtabledetails("vehicles")
 
 # root=tk.Tk()
 # root.title("Vehicle Search")
