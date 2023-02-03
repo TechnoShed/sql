@@ -7,6 +7,14 @@ import tkinter as tk
 serverhost = "technoshed.duckdns.org"
 serveruser = "root"
 serverpass = "TSD704153TSD"
+basepath = "/media/bass/603D-E572/DEV/sql"
+
+#serverhost = "192.168.1.201"
+serverhost = "technoshed.duckdns.org"
+serveruser = "root"
+serverpass = "TSD704153TSD"
+serverdb = "inspectionDB"
+connectionstring = "mysql+pymysql://"+str(serveruser)+":"+str(serverpass)+"@"+str(serverhost)+"/"+str(serverdb)
 
 def dfquerymysql(searchstr):
     query = searchstr
@@ -15,14 +23,14 @@ def dfquerymysql(searchstr):
                     .format(user=serveruser,
                             pw=serverpass,
                             server=serverhost,
-                            db="inspections"))
+                            db="inspectionDB"))
     new_df1 =pd.read_sql_query(query, mydb)
     return new_df1
 
 def showmysql():
     mydb = mysql.connector.connect(host=serverhost,
                                  user=serveruser,
-                                 database='inspections',
+                                 database='inspectionDB',
                                  password=serverpass)
     mycursor = mydb.cursor()
     if mydb.is_connected():
@@ -37,7 +45,7 @@ def showmysql():
 def showtabledetails(tablename):
     mydb = mysql.connector.connect(host=serverhost,
                                  user=serveruser,
-                                 database='inspections',
+                                 database='inspectionDB',
                                  password=serverpass)
     mycursor = mydb.cursor()
     if mydb.is_connected():
@@ -52,13 +60,11 @@ def showtabledetails(tablename):
             mydb.close()
 
 def copymysql( df,tablename ):
-    mydb = create_engine("mysql+pymysql://{user}:{pw}@{server}/{db}"
-                    .format(user=serveruser,
-                            pw=serverpass,
-                            server=serverhost,
-                            db="inspections"))
+    connecion
+    mydb = create_engine(connectionstring)
     try:
-        frame           = df.to_sql(tablename, mydb, if_exists='fail', index=False);
+        print("Trying:   "+connectionstring
+        frame = df.to_sql(tablename, mydb, if_exists='fail', index=False);
     except ValueError as vx:#
         print(vx)
     except Exception as ex:
@@ -126,7 +132,7 @@ def updatemileage(reg , mileage):
     return mileage
 
 def getmileage(reg):
-    query="SELECT mileage, reg FROM inspections.vehicles WHERE REG='"+reg+"'"
+    query="SELECT mileage, reg FROM inspectionDB.vehicles WHERE REG='"+reg+"'"
     mileage = querydb(query)[0]
     return mileage
 
@@ -139,14 +145,18 @@ def getmileage(reg):
     # print(inspections)
     
 print("TechnoShed Studios MYSQL Fleet Manager functions test\n\n")
-# showmysql()
-searchstr = "GD18XOZ"
 
-mileage =getmileage(searchstr)
-updatemileage(searchstr, 3000)
-newmileage=getmileage(searchstr)
-print(searchstr+" has a mile of "+str(mileage) +" and now has a mileage of" + str(newmileage))
-#vehicledetails, vehiclecomments, vehicleinspections = getvehicledetails(searchstr)
+
+df = pd.read_excel(basepath+"/files/newdata.xlsx")
+
+# showmysql()
+# searchstr = "GD18XOZ"
+
+# mileage =getmileage(searchstr)
+# updatemileage(searchstr, 3000)
+# newmileage=getmileage(searchstr)
+# print(searchstr+" has a mile of "+str(mileage) +" and now has a mileage of" + str(newmileage))
+# #vehicledetails, vehiclecomments, vehicleinspections = getvehicledetails(searchstr)
 
 # print(vehicledetails)
 # print(vehiclecomments)

@@ -9,8 +9,8 @@ import tkinter as tk
 
 # GLOBAL VARIABLES
 
-serverhost = "192.168.1.201"
-#serverhost = "technoshed.duckdns.org"
+#serverhost = "192.168.1.201"
+serverhost = "technoshed.duckdns.org"
 serveruser = "root"
 serverpass = "TSD704153TSD"
 
@@ -43,9 +43,112 @@ class inspection():
         self.reg=REG
         self.inspector=Inspector
         self.datetime=DateTime
-        
-        pass
+        self.location=Location
+        self.Mileage=Mileage
+        self.frimage=Front_Image
+        self.osimage=OS_Image
+        self.nsimage=NS_Image
+        self.rrimage=Rear_Image
+        self.dash=Dash_Alerts
+        self.fuel=Fuel_Level
+        self.oil=Oil_Level
+        self.coolant=Coolant_Level
+        self.brakef=Brake_Fluid_Level
+        self.steeringf=Steering_Fluid_Level
+        self.screenwash=Screenwash_Level
+        self.hoses=Hoses
+        self.belts=Belts
+        self.pressures=Tyre_Pressures
+        self.nsftyre=NSF_Tyre
+        self.osftyre=OSF_Tyre
+        self.osrtyre=OSR_Tyre
+        self.nsrtyre=NSR_Tyre
+        self.frlights=Front_Lights
+        self.rrlights=Rear_Lights
+        self.olights=Other_Lights
+        self.windscreen=Windscreen_Clear
+        self.horn=Horn
+        self.seatbelts=Seat_Belts
+        self.fwipers=Wipers
+        self.rwipers=Rear_Wipers
+        self.hbrake=Hand_Brake
+        self.medkit=Med_Kit
+        self.osdoors=OS_Doors
+        self.nsdoors=NS_Doors
+        self.notes=Notes
+        self.image=Images
+        self.attachments=Attachments
+        self.passfail=PassFail
+        self.filename=Filename
+        self.site=Site
+        self.adblue=AdBlue
 
+    def add(self):
+        self.datetime = str(datetime.now())
+        self.inspector = "sys-ins-added"
+        mydb = mysql.connector.connect(host=serverhost,
+                                 user=serveruser,
+                                 database='inspections',
+                                 password=serverpass)
+        mycursor = mydb.cursor()
+        if mydb.is_connected():
+            command ="""INSERT INTO inspections VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            
+            input_data= (self.id,
+            self.reg,
+            self.inspector,
+            str(self.datetime),
+            self.location,
+            str(self.Mileage),
+            self.frimage,
+            self.osimage,
+            self.nsimage,
+            self.rrimage,
+            self.dash,
+            self.fuel,
+            self.oil,
+            self.coolant,
+            self.brakef,
+            self.steeringf,
+            self.screenwash,
+            self.hoses,
+            self.belts,
+            self.pressures,
+            self.nsftyre,
+            self.osftyre,
+            self.osrtyre,
+            self.nsrtyre,
+            self.frlights,
+            self.rrlights,
+            self.olights,
+            self.windscreen,
+            self.horn,
+            self.seatbelts,
+            self.fwipers,
+            self.rwipers,
+            self.hbrake,
+            self.medkit,
+            self.osdoors,
+            self.nsdoors,
+            self.notes,
+            self.image,
+            self.attachments,
+            self.passfail,
+            self.filename,
+            self.site,
+            self.adblue)
+
+            input_data = (self.vin,self.make,self.model,str(self.year),self.colour,str(self.mileage),self.type,self.image,self.inspector,str(self.updated),self.status,self.site)
+            mycursor.execute(command, input_data)
+            mycursor.close()
+            mydb.commit()
+            mydb.close()
+            newcomment = comment("",self.reg,str(self.updated),"sys-veh","Record Created")
+            newcomment.add()
+            print("DB:CREATE   :"+self.colour+" "+self.make+" "+self.model+"("+self.reg+") with "+str(self.mileage)+" mls. created @ "+str(self.updated)+" by "+ self.inspector)
+            return           
+
+      
 class vehicle():
     def __init__(self,ID, REG, VIN, Make, Model, Year, Colour, Mileage, Type, Image, Inspector, DateTime_Updated, Status, Site):
         self.id=ID
@@ -147,7 +250,7 @@ class vehicle():
                 # self.datetime = x[1]
                 # self.user = x[2]
                 # self.comment = x[3]
-                output = output + str(counter)+" - "+str(x[0])+" by "+str(x[1])+"\n   "+str(x[2])+"\n\n"
+                output = output + str(counter+1)+" - "+str(x[0])+" by "+str(x[1])+"\n   "+str(x[2])+"\n\n"
                 counter = counter +1
             print("Retreived "+str(counter)+" Comments on "+self.reg.upper())
             mycursor.close()
@@ -181,6 +284,12 @@ class vehicle():
             mydb.commit()
             mydb.close()
         return
+    def startinspection(self):
+        updatetime = str(datetime.now())
+        self.createComment("Started Inspection at "+updatetime)
+        inspect=inspection("",self.reg,"", updatetime ,"","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",)
+        return inspect
+
 
 van = vehicle("","FD22VSC","","","","","","","","","","","","")
 #print("updating mileage on VAN reg "+van.reg)
@@ -194,10 +303,15 @@ van = vehicle("","FD22VSC","","","","","","","","","","","","")
 #van.writeback()
 #van.createComment("YOu on the other hand, mouth and bumhole, LOVE cock")
 
+# myinspection=van.startinspection()
+# print("REG : "+van.reg)
+# print("INSPECTION : "+myinspection.reg+"\nCreated : "+str(myinspection.datetime))
+
 
 # TKinter portion GUI
 
 # Setup root window properties
+
 
 root=tk.Tk()
 root.title("TechnoShed Studios - Fleet Vehicle Database")
@@ -214,12 +328,20 @@ searchEntry = tk.Entry(searchFrame)
 databaseFrame = tk.LabelFrame(root, text="Database Results "+str(searchEntry.get()), borderwidth=5, relief="ridge", bg="light green")
 vehicleFrame = tk.LabelFrame(root, text="Vehicle Details", borderwidth=5, relief="ridge", bg="light blue")
 
-# place frames with grid()
-databaseFrame.grid(row=0,column=0,columnspan=2,rowspan=3)
-searchFrame.grid(row=0,column=2)
-vehicleFrame.grid(row=1,column=2,columnspan=2,rowspan=2)
+# define comment frame
 
-# define form
+commentFrame= tk.LabelFrame(root, text="Comments on "+str(foundvan.reg), borderwidth=5, relief="ridge", bg="light blue",fg="black")
+commentBox= tk.Text(commentFrame,  height=11, width=37, pady=5,padx=5, bg="light yellow", fg="black")
+
+# place frames with grid()
+databaseFrame.grid(row=0,column=0,columnspan=2,rowspan=7)
+searchFrame.grid(row=0,column=2,columnspan=2)
+vehicleFrame.grid(row=1,column=2,columnspan=2,rowspan=2)
+commentFrame.grid(row=4,column=2,columnspan=2,rowspan=2)
+
+# place comments qidgets in commentFrame
+
+commentBox.grid(row=0, column=0, columnspan=2)
 
 
 # define vehicle details frame
@@ -330,9 +452,16 @@ def searchvehicle():
 def updatemile():
     foundvan.updateMileage(mileageEntry.get()) 
 
-searchButton = tk.Button(searchFrame, padx=5, pady=5, text="SEARCH",command=searchvehicle)
+def addcomment():
+    foundvan.createComment(commentBox.get("1.0","end"))
+    commentBox.delete("1.0","end")
+    pass
 
-details = tk.Text(databaseFrame, height=20, width=60, pady=5,padx=5, bg="light yellow", fg="black")
+searchButton = tk.Button(searchFrame, padx=5, pady=5, text="SEARCH",command=searchvehicle)
+commentButton =tk.Button(commentFrame, padx=5, pady=5, text="SUBMIT Comment", command=addcomment)
+commentButton.grid(row=1,column=1, columnspan=2)
+
+details = tk.Text(databaseFrame, height=37, width=60, pady=5,padx=5, bg="light yellow", fg="black")
 details.grid(row=0, column=0)
 
 
@@ -344,5 +473,6 @@ searchButton.grid(row=1,column=2, padx=5, pady=5)
 #
 root.bind('<Return>', (lambda event: searchvehicle()))
 mileageEntry.bind('<Return>',(lambda event: updatemile()))
+commentBox.bind('<Return>',(lambda event:addcomment()))
 
 root.mainloop()
