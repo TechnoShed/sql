@@ -1,4 +1,4 @@
-# NEW script using SQLalchemy to interface with SQL database instead of sql.connector and using raw SQL 
+# NEW script using SQLalchemy to interface with SQL database instead of sql.connector and raw SQL 
 
 # THIS WILL BE THE BASIS OF THE VEHICLE INVENTORY SYSTEM
 
@@ -13,12 +13,9 @@ Base = declarative_base()
 
 # GLOBAL VARIABLES
 
-#serverhost = "192.168.1.201"
-serverhost = "technoshed.duckdns.org"
-serveruser = "root"
-serverpass = "TSD704153TSD"
+serverhost = "192.168.1.201"
 serverdb = "inspectionDB"
-connectionstring = "mysql+pymysql://"+str(serveruser)+":"+str(serverpass)+"@"+str(serverhost)+"/"+str(serverdb)
+connectionstring = "mysql+pymysql://root:TSD704153TSD@"+str(serverhost)+"/"+str(serverdb)
 
 class Vehicle(Base):
     __tablename__ = "vehicles"
@@ -46,6 +43,15 @@ class Vehicle(Base):
         self.updatedon = updatedon
     def __repr__(self):
         return f"({self.reg}) {self.year} {self.colour} {self.make} {self.model} with Mileage {self.mileage} at Status {self.status} at {self.site} Last updated ({self.updatedby} on {self.updatedon})"
+    def updateMileage(self, newmileage):
+        timenow = str(datetime.now())
+        print("MILEAGE UPDATE: on "+foundvan.reg+" from "+str(foundvan.mileage)+" to "+str(newmileage))
+        mileagecomment = Comment(random.randint(0,999999), "Mileage Updated from "+str(foundvan.mileage)+" to "+str(newmileage),"MILEAGE UPD",timenow,foundvan.reg)
+        session.add(mileagecomment)
+        foundvan.mileage = newmileage
+        session.commit()
+        print("MILEAGE UPDATED")
+
 
 class Comment(Base):
     __tablename__ = "comments"
@@ -79,15 +85,16 @@ def loadvehicle(reg): # takes GLOBAL session from makeconnection() and loads veh
     vehicle = session.query(Vehicle).filter(Vehicle.reg == reg).first()
     if not vehicle:
         print("QUERY:         NO RESULTS FOUND")
-    print("DB:            LOADED reg "+Vehicle.reg)
+    # else:
+    #     print("DB:            LOADED reg "+ vehicle.reg)
     return vehicle
 
-def savechanges():
+def savechanges(reason):
     global session
     present = str(datetime.now())
     print("SESSION:       COMMIT at "+str(present))
     foundvan.updatedon = present
-    foundvan.updatedby = "GFaylrd"
+    foundvan.updatedby = reason
     session.commit()
 
 updatingreg = "XX11XXX"
@@ -96,7 +103,6 @@ timenow = str(datetime.now())
 
 session = makeconnection()
 #van = Vehicle(updatingreg,"TechnoShed","EV-01","Grey",4,2023,"TEST","Grimsby","DEV TEAM",timenow)
-print("\nAPPLICATION:   Loading Record for "+updatingreg+" at "+timenow+"\n")
 #session.add(van)
 #savechanges()
 
@@ -105,12 +111,15 @@ if not foundvan:
     print("ERROR LD REC:  Vehicle "+updatingreg+" NOT FOUND")
 else:
     print("LD REC:        Found van "+foundvan.reg+" with mileage : "+str(foundvan.mileage))
-foundvan.mileage = foundvan.mileage + 500
-print("SESSION:       mileage for "+str(foundvan.reg)+" is changed to "+str(foundvan.mileage))
+
+
+foundvan.updateMileage(foundvan.mileage+666)
+
+
 # commentnum = 18
-# firstcomment = Comment(random.randint(0,999999),"Bog Scraping","Bummer In Da Bogs",timenow,updatingreg)
+# firstcomment = Comment(random.randint(0,999999),"Bog licking","Gonzo",timenow,updatingreg)
 # session.add(firstcomment)
-savechanges()
+# savechanges()
 #
 
 # TKinter portion GUI
