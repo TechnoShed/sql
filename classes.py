@@ -1,7 +1,6 @@
 from datetime import datetime
 import mysql.connector
 from mysql.connector import Error
-import tkinter as tk
 
 # Classes first script
 
