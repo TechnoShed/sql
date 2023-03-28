@@ -10,8 +10,8 @@ from mysql.connector import Error
 
 #serverhost = "192.168.1.201"
 serverhost = "technoshed.duckdns.org"
-serveruser = "root"
-serverpass = "TSD704153TSD"
+serveruser = "redated"
+serverpass = "Again Redacted"
 
 class comment():
     def __init__(self, REG, DateTime, User, Comment):
