@@ -5,14 +5,8 @@ from sqlalchemy import create_engine
 import tkinter as tk
 
 serverhost = "technoshed.duckdns.org"
-serveruser = "root"
-serverpass = "TSD704153TSD"
-basepath = "/media/bass/603D-E572/DEV/sql"
-
-#serverhost = "192.168.1.201"
-serverhost = "technoshed.duckdns.org"
-serveruser = "root"
-serverpass = "TSD704153TSD"
+serveruser = "GayLordBummer"
+serverpass = "TakesituphisAss"
 serverdb = "inspectionDB"
 connectionstring = "mysql+pymysql://"+str(serveruser)+":"+str(serverpass)+"@"+str(serverhost)+"/"+str(serverdb)
 
